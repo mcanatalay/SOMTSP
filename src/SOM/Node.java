@@ -4,6 +4,10 @@ public class Node {
     private double x,y;
     private int update,choose;
     
+    public void print(){
+        System.out.print("X: " + this.x + " Y: " + this.y + " ");
+    }
+    
     public void setXY(double x, double y){
         this.x = x;
         this.y = y;

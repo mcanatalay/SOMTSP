@@ -5,6 +5,10 @@ public class Neuron {
     private double wx,wy;
     private int update,choose;
     
+    public void print(){
+        System.out.print("X: " + this.wx + " Y: " + this.wy + " ");
+    }
+    
     public void setXY(double x, double y){
         this.x = x;
         this.y = y;

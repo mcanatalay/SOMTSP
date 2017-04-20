@@ -6,16 +6,15 @@ public class Kohonen {
     private int NNeurons;
     private Node nodes[];
     private Neuron neurons[];
-    private double result[][];
-    private double theta,phi,momentum;
+    private double theta, alpha, decay;
     
     public Kohonen(int NNodes){
         this.NNodes = NNodes;
         this.NNeurons = NNodes * 2;
         
         theta = 0.5;
-        phi = 0.5;
-        momentum = 0.995;
+        alpha = 0.5;
+        decay = 0.995;
         
         /* TODO: Creating Nodes will be external.
         Only Nodes will be accepted, NNodes will be calculated from here!
@@ -34,25 +33,12 @@ public class Kohonen {
     }
     
     private void createNeurons(){
-        double alpha = 0.0;
+        double omega = 0.0;
         neurons = new Neuron[NNeurons];
         
         for(int i = 0; NNeurons > i; i++) {
-            neurons[i] = new Neuron(0.5 + 0.5 * Math.cos(alpha), 0.5 + 0.5 * Math.sin(alpha));
-            alpha += Math.PI * 2.0 / (double) (NNeurons);
-        }
-    }
-    
-    private void calculateResultMatrix(){
-        result = new double[NNeurons][NNeurons];
-        
-        for(int i = 0; NNeurons > i; i++){
-            result[i][i] = 1.0;
-            for(int j = i + 1; NNeurons > j; j++){
-                double distanceBetween = neurons[i].distanceToNode(neurons[j]);
-                result[i][j] = Math.exp(-1.0 * Math.pow(distanceBetween, 2) / (2.0 * Math.pow(theta, 2)));
-                result[j][i] = result[i][j];
-            }
+            neurons[i] = new Neuron(0.5 + 0.5 * Math.cos(omega), 0.5 + 0.5 * Math.sin(omega));
+            omega += Math.PI * 2.0 / (double) (NNeurons);
         }
     }
     
@@ -83,21 +69,29 @@ public class Kohonen {
         return value + (Math.random() * NEAR) - NEAR / 2;
     }
     
+    private double calculatePhi(Neuron n1, Neuron n2){
+        double distanceBetween = n1.distanceToNode(n2);//CHECK!
+        
+        return Math.exp(-1.0 * Math.pow(distanceBetween, 2) / (2.0 * Math.pow(theta, 2)));
+    }
+    
     private void updateNeuronWeights(int closestNeuron, double x, double y){
         for(int i = 0; NNeurons > i; i++){
-            double wx = neurons[i].getWX() + (phi * result[i][closestNeuron] * (x - neurons[i].getWX()));
-            double wy = neurons[i].getWY() + (phi * result[i][closestNeuron] * (y - neurons[i].getWY()));
+            double phi = calculatePhi(neurons[i], neurons[closestNeuron]);
+            
+            double wx = neurons[i].getWX() + (alpha * phi * (x - neurons[i].getWX()));
+            double wy = neurons[i].getWY() + (alpha * phi * (y - neurons[i].getWY()));
             neurons[i].setWXY(wx, wy);
         }
     }
     
     private void decreaseLearningRate(){
-        phi *= momentum;
-        theta *= momentum;
+        alpha *= decay;
+        theta *= decay;
     }
     
-    public void run(){
-        while(true){
+    public void run(int EPOCH){
+        while(EPOCH-- > 0){
             int nodeIndex = getRandomNode();
             
             double x = calculateNearValue(nodes[nodeIndex].getX());
@@ -108,9 +102,32 @@ public class Kohonen {
             updateNeuronWeights(closestNeuron, x, y);
             
             decreaseLearningRate();
-            
-            calculateResultMatrix();            
         }
+    }
+    
+    private void printNodes(){
+        for(int i = 0; NNodes > i; i++){
+            System.out.print("ID: " + i + " ");
+            nodes[i].print();
+            System.out.print("\n");
+        }
+    }
+    
+    private void printNeurons(){
+        for(int i = 0; NNeurons > i; i++){
+            System.out.print("ID: " + i + " ");
+            neurons[i].print();
+            System.out.print("\n");
+        }
+    }
+    
+    public void print(){
+        System.out.println("Status");
+        System.out.println("Nodes");
+        printNodes();
+        System.out.println("Neurons");
+        printNeurons();
+        System.out.println();
     }
     
 }
