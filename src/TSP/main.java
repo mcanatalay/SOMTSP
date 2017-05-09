@@ -1,17 +1,18 @@
 package TSP;
 
-import SOM.Kohonen;
-
 public class main {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Kohonen test = new Kohonen(20);
-        test.print();
-        test.run(2000);
-        test.print();
+        Visual test = new Visual();
+        test.start();
+        test.draw(); 
+        for(int i = 0; 30000 > i; i++){
+            try{Thread.sleep(500);}catch(InterruptedException e){};
+            test.train(1);
+            test.draw(); 
+        }
     }
-    
 }

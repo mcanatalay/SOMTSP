@@ -1,5 +1,7 @@
 package SOM;
 
+import SOM.SEARCH.*;
+
 public class Kohonen {
     private static final double NEAR = 0.05;
     private int NNodes;
@@ -7,14 +9,18 @@ public class Kohonen {
     private Node nodes[];
     private Neuron neurons[];
     private double theta, alpha, decay;
+    private String searchStrategy = "SA";
     
-    public Kohonen(int NNodes){
+    public Kohonen(int NNodes, String searchStrategy){
         this.NNodes = NNodes;
         this.NNeurons = NNodes * 2;
+                
+        this.searchStrategy = searchStrategy;
+                
         
-        theta = 0.5;
-        alpha = 0.5;
-        decay = 0.995;
+        this.theta = 0.8;
+        this.alpha = 0.8;
+        this.decay = 0.995;
         
         /* TODO: Creating Nodes will be external.
         Only Nodes will be accepted, NNodes will be calculated from here!
@@ -22,6 +28,18 @@ public class Kohonen {
         */
         createNodes();
         createNeurons();
+    }
+    
+    public double getTotalDistance(){
+        double total = 0;
+        
+        for(int i = 0; NNeurons-1 > i; i++){
+            total += neurons[i].distanceWeightToNeuron(neurons[i+1]);
+        }
+        
+        total += neurons[0].distanceWeightToNeuron(neurons[neurons.length-1]);
+        
+        return total;
     }
     
     private void createNodes(){
@@ -43,19 +61,15 @@ public class Kohonen {
     }
     
     private int findClosestNeuron(double x, double y){
-        int closestNeuron = -1;
-        double minDistance = Double.MAX_VALUE;
-
-        for(int i = 0; NNeurons > i ; i++){
-            double distance = Math.pow(x - neurons[i].getWX(), 2) + Math.pow(y - neurons[i].getWY(), 2);
-            
-            if(distance < minDistance){
-                minDistance = minDistance;
-                closestNeuron = i;
-            }
+        if(searchStrategy == "LS"){
+            LS linearSearch = new LS();
+            return linearSearch.search(x, y, neurons);
+        } else if(searchStrategy == "SA"){
+            SA simulatingAnnealling = new SA();
+            return simulatingAnnealling.anneal(x, y, neurons);
         }
         
-        return closestNeuron;
+        return -1;
     }
     
     private int getRandomNode(){
@@ -69,11 +83,14 @@ public class Kohonen {
         return value + (Math.random() * NEAR) - NEAR / 2;
     }
     
-    private double calculatePhi(Neuron n1, Neuron n2){
-        double distanceBetween = n1.distanceToNode(n2);//CHECK!
+    public double calculatePhi(Neuron n1, Neuron n2){
+        double distanceBetween = n1.distanceToNeuron(n2);//CHECK!
         
-        return Math.exp(-1.0 * Math.pow(distanceBetween, 2) / (2.0 * Math.pow(theta, 2)));
+        return Math.exp(-1.0 * (distanceBetween * distanceBetween) / (2.0 * Math.pow(theta, 2)));
     }
+    
+    public double getTetha(){ return theta; }
+    public double getAlpha(){ return alpha; }
     
     private void updateNeuronWeights(int closestNeuron, double x, double y){
         for(int i = 0; NNeurons > i; i++){
@@ -86,16 +103,15 @@ public class Kohonen {
     }
     
     private void decreaseLearningRate(){
-        alpha *= decay;
-        theta *= decay;
+        this.alpha *= decay;
+        this.theta *= decay;
     }
     
-    public void run(int EPOCH){
+    public void train(int EPOCH){
         while(EPOCH-- > 0){
             int nodeIndex = getRandomNode();
-            
-            double x = calculateNearValue(nodes[nodeIndex].getX());
-            double y = calculateNearValue(nodes[nodeIndex].getY());
+            double x = nodes[nodeIndex].getX();
+            double y = nodes[nodeIndex].getY();
             
             int closestNeuron = findClosestNeuron(x, y);
             
@@ -121,6 +137,12 @@ public class Kohonen {
         }
     }
     
+    public int numberOfNeurons(){ return neurons.length; }
+    public int numberOfNodes(){ return nodes.length; }
+    
+    public Neuron getNeuron(int i){ return neurons[i]; }
+    public Node getNode(int i){ return nodes[i]; }
+
     public void print(){
         System.out.println("Status");
         System.out.println("Nodes");

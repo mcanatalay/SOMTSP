@@ -47,6 +47,6 @@ public class Node {
         double distanceX = this.x - other.getX();
         double distanceY = this.y - other.getY();
         
-        return Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY, 2));
+        return Math.sqrt(distanceX*distanceX + distanceY*distanceY);
     }
 }

@@ -44,11 +44,11 @@ public class Neuron {
     }
     
     public double getWX(){
-        return this.x;
+        return this.wx;
     }
     
     public double getWY(){
-        return this.y;
+        return this.wy;
     }
     
     public Neuron(double x, double y){
@@ -59,17 +59,17 @@ public class Neuron {
         this.wy = Math.random();
     }
     
-    public double distanceToNode(Neuron other){
+    public double distanceToNeuron(Neuron other){
         double distanceX = this.x - other.getX();
         double distanceY = this.y - other.getY();
         
-        return Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY, 2));
+        return Math.sqrt(distanceX*distanceX + distanceY*distanceY);
     }
     
-    public double distanceWeightToNode(Neuron other){
+    public double distanceWeightToNeuron(Neuron other){
         double distanceWX = this.wx - other.getWX();
         double distanceWY = this.wy - other.getWY();
         
-        return Math.sqrt(Math.pow(distanceWX,2) + Math.pow(distanceWY, 2));
+        return Math.sqrt(distanceWX*distanceWX + distanceWY*distanceWY);
     }
 }
