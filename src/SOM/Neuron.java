@@ -3,7 +3,6 @@ package SOM;
 public class Neuron {
     private double x,y;
     private double wx,wy;
-    private int update,choose;
     
     public void print(){
         System.out.print("X: " + this.wx + " Y: " + this.wy + " ");
@@ -12,29 +11,13 @@ public class Neuron {
     public void setXY(double x, double y){
         this.x = x;
         this.y = y;
-        
-        this.update++;
     }
     
     public void setWXY(double wx, double wy){
         this.wx = wx;
         this.wy = wy;
-        
-        this.update++;
     }
-    
-    public void choosen(){
-        this.choose++;
-    }
-    
-    public int getNChoose(){
-        return this.choose;
-    }
-    
-    public int getNUpdate(){
-        return this.update;
-    }
-    
+
     public double getX(){
         return this.x;
     }

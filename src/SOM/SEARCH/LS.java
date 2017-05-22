@@ -11,7 +11,7 @@ public class LS {
             double distance = (Math.pow(x - neurons[i].getWX(), 2)) + (Math.pow(y - neurons[i].getWY(), 2));
             
             if(distance < minDistance){
-                minDistance = minDistance;
+                minDistance = distance;
                 closestNeuron = i;
             }
         }

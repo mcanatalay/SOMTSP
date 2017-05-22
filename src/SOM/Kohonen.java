@@ -9,7 +9,7 @@ public class Kohonen {
     private Node nodes[];
     private Neuron neurons[];
     private double theta, alpha, decay;
-    private String searchStrategy = "SA";
+    private String searchStrategy = "LS";
     
     public Kohonen(int NNodes, String searchStrategy){
         this.NNodes = NNodes;
@@ -18,14 +18,10 @@ public class Kohonen {
         this.searchStrategy = searchStrategy;
                 
         
-        this.theta = 0.8;
-        this.alpha = 0.8;
-        this.decay = 0.995;
+        this.theta = 0.5;
+        this.alpha = 0.5;
+        this.decay = 0.999;
         
-        /* TODO: Creating Nodes will be external.
-        Only Nodes will be accepted, NNodes will be calculated from here!
-        This is not a random node creation library!
-        */
         createNodes();
         createNeurons();
     }
@@ -61,12 +57,12 @@ public class Kohonen {
     }
     
     private int findClosestNeuron(double x, double y){
-        if(searchStrategy == "LS"){
+        if("LS".equals(this.searchStrategy)){
             LS linearSearch = new LS();
             return linearSearch.search(x, y, neurons);
-        } else if(searchStrategy == "SA"){
-            SA simulatingAnnealling = new SA();
-            return simulatingAnnealling.anneal(x, y, neurons);
+        } else if("SA".equals(this.searchStrategy)){
+            SA simulatingAnnealling = new SA(neurons);
+            return simulatingAnnealling.anneal(x, y);
         }
         
         return -1;
@@ -74,7 +70,6 @@ public class Kohonen {
     
     private int getRandomNode(){
         int nodeIndex = (int) (Math.random() * NNodes);
-        nodes[nodeIndex].choosen();
         
         return nodeIndex;
     }
@@ -110,8 +105,8 @@ public class Kohonen {
     public void train(int EPOCH){
         while(EPOCH-- > 0){
             int nodeIndex = getRandomNode();
-            double x = nodes[nodeIndex].getX();
-            double y = nodes[nodeIndex].getY();
+            double x = calculateNearValue(nodes[nodeIndex].getX());
+            double y = calculateNearValue(nodes[nodeIndex].getY());
             
             int closestNeuron = findClosestNeuron(x, y);
             

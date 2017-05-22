@@ -10,8 +10,8 @@ public class main {
         test.start();
         test.draw(); 
         for(int i = 0; 30000 > i; i++){
-            try{Thread.sleep(500);}catch(InterruptedException e){};
-            test.train(1);
+            try{Thread.sleep(5);}catch(InterruptedException e){};
+            test.train(2);
             test.draw(); 
         }
     }
