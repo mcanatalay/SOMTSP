@@ -2,6 +2,7 @@ package SOM.SEARCH;
 
 import SOM.*;
 
+//performs linear search on the given neurons to find the closest neuron to given coordinates
 public class LS {
     public int search(double x, double y, Neuron neurons[]){
         int closestNeuron = -1;

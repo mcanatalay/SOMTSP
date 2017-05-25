@@ -9,6 +9,8 @@ import acm.program.*;
 
 import SOM.*;
 
+
+//VISUALIZE RESULTS
 public class Visual extends GraphicsProgram {
     private static final int DOTSIZE = 4;
     private static final int MARGIN = 20;
@@ -17,7 +19,7 @@ public class Visual extends GraphicsProgram {
     
     private Map<Integer, GLine> lineGraphic = new HashMap<Integer, GLine>();
     private Map<Integer, GOval> neuronGraphic = new HashMap<Integer, GOval>();
-    Kohonen solver = new Kohonen(20,"LS");
+    private Kohonen solver;
     
     @Override
     public void init(){
@@ -78,5 +80,11 @@ public class Visual extends GraphicsProgram {
     
     public void train(int EPOCH){
         solver.train(EPOCH);
+    }
+    
+    public void doTheThing(int nodenumber, String visMethod){
+        this.solver =  new Kohonen(nodenumber,visMethod);
+        start();
+        draw();
     }
 }
